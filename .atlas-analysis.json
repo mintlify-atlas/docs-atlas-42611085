@@ -1,0 +1,51 @@
+{
+  "projectType": "cli-tool",
+  "projectName": "imagemin CLI",
+  "projectDescription": "A command-line tool to minify images seamlessly using imagemin plugins for PNG, JPEG, GIF, SVG, and WebP formats.",
+  "theme": "mint",
+  "primaryColor": "#4CAF50",
+  "lightColor": "#81C784",
+  "darkColor": "#2E7D32",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["introduction", "installation"]
+          },
+          {
+            "group": "Usage",
+            "pages": ["usage/basic-usage", "usage/stdin-stdout", "usage/glob-patterns"]
+          },
+          {
+            "group": "Plugins",
+            "pages": ["plugins/overview", "plugins/default-plugins", "plugins/custom-plugins", "plugins/plugin-options"]
+          },
+          {
+            "group": "Reference",
+            "pages": ["reference/cli-flags", "reference/troubleshooting"]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Minify PNG, JPEG, GIF, SVG, and WebP images from the command line",
+    "Support for glob patterns to process multiple images at once",
+    "Output to a directory with --out-dir flag",
+    "Pipe support via stdin/stdout for stream-based workflows",
+    "Configurable plugins with per-plugin options",
+    "Default plugins: gifsicle, jpegtran, optipng, svgo",
+    "Custom plugin support via --plugin flag"
+  ],
+  "publicApiSurface": [
+    "imagemin <path|glob> ... --out-dir=<dir>",
+    "--plugin, -p: Override default plugins",
+    "--out-dir, -o: Output directory",
+    "--plugin.<name>.<option>=<value>: Per-plugin options",
+    "stdin pipe: cat <file> | imagemin > <output>",
+    "stdout redirect: imagemin <file> > <output>"
+  ]
+}

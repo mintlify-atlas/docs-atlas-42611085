@@ -1,0 +1,75 @@
+---
+title: "stdin and stdout"
+description: "Stream images through imagemin using Unix pipes"
+---
+
+Imagemin supports reading from stdin and writing to stdout, making it easy to integrate with shell pipelines, CI scripts, and other command-line tools.
+
+## Writing to stdout
+
+When no `--out-dir` flag is given, imagemin writes the minified image binary to stdout. Redirect it to a file:
+
+```bash
+imagemin foo.png > foo-optimized.png
+```
+
+## Reading from stdin
+
+Pipe an image into imagemin using a Unix pipe:
+
+```bash
+cat foo.png | imagemin > foo-optimized.png
+```
+
+Imagemin detects that stdin is not a TTY and reads the binary buffer automatically — no flags required.
+
+## How stdin detection works
+
+At startup, imagemin checks `process.stdin.isTTY`. If the terminal is not interactive (i.e. data is being piped in), it reads a binary buffer from stdin and processes it directly. If the TTY check passes and no file arguments are given, imagemin exits with:
+
+```
+Specify at least one file path
+```
+
+## Use cases
+
+**CI pipelines** — minify images as part of a build step without writing intermediate files:
+
+```bash
+cat src/hero.png | imagemin > dist/hero.png
+```
+
+**Shell scripts** — chain image processing steps together:
+
+```bash
+#!/bin/bash
+for f in images/*.png; do
+  imagemin "$f" > "build/$(basename $f)"
+done
+```
+
+**Fetching and minifying remote images** — pipe `curl` output directly into imagemin:
+
+```bash
+curl -s https://example.com/photo.jpg | imagemin > photo-min.jpg
+```
+
+**Combining with other tools** — use imagemin in a pipeline with tools like `pv` to monitor progress:
+
+```bash
+cat large-image.png | pv | imagemin > large-image-min.png
+```
+
+<Warning>
+  You cannot write multiple files to stdout. If your input resolves to more than one file, you must use `--out-dir`:
+
+  ```bash
+  # This will fail:
+  imagemin images/* > output.png
+
+  # Do this instead:
+  imagemin images/* --out-dir=build
+  ```
+
+  Imagemin will exit with an error if multiple files are matched and no `--out-dir` is specified.
+</Warning>

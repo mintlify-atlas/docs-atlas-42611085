@@ -1,0 +1,95 @@
+---
+title: "Installation"
+description: "Install imagemin CLI globally with npm"
+---
+
+<Note>
+  imagemin CLI requires **Node.js 18 or higher**. Run `node --version` to check your current version.
+</Note>
+
+## Install imagemin CLI
+
+<Steps>
+  <Step title="Install the CLI globally">
+    Install imagemin CLI from npm. The default plugins (gifsicle, jpegtran, optipng, svgo) are bundled as optional dependencies and installed automatically.
+
+    <CodeGroup>
+
+    ```bash npm
+    npm install --global imagemin-cli
+    ```
+
+    ```bash yarn
+    yarn global add imagemin-cli
+    ```
+
+    ```bash pnpm
+    pnpm add --global imagemin-cli
+    ```
+
+    </CodeGroup>
+  </Step>
+
+  <Step title="Verify the installation">
+    Confirm imagemin CLI is available by running:
+
+    ```bash
+    imagemin --help
+    ```
+
+    You should see output like this:
+
+    ```
+      Usage
+        $ imagemin <path|glob> ... --out-dir=build [--plugin=<name> ...]
+        $ imagemin <file> > <output>
+        $ cat <file> | imagemin > <output>
+
+      Options
+        --plugin, -p   Override the default plugins
+        --out-dir, -o  Output directory
+    ```
+  </Step>
+
+  <Step title="Install additional plugins (optional)">
+    The default plugins cover PNG, JPEG, GIF, and SVG. To support additional formats or enable lossy compression, install extra plugins globally:
+
+    ```bash
+    # Lossy PNG compression
+    npm install --global imagemin-pngquant
+
+    # WebP encoding
+    npm install --global imagemin-webp
+    ```
+
+    <Tip>
+      See the [plugins overview](/plugins/overview) for the full list of available plugins and how to use them.
+    </Tip>
+  </Step>
+</Steps>
+
+## Default plugins
+
+The following plugins are installed automatically as optional dependencies when you install imagemin CLI:
+
+| Plugin | Format | Compression |
+|--------|--------|-------------|
+| `imagemin-gifsicle` | GIF | Lossless |
+| `imagemin-jpegtran` | JPEG | Lossless |
+| `imagemin-optipng` | PNG | Lossless |
+| `imagemin-svgo` | SVG | Lossless |
+
+<Note>
+  These plugins are marked as `optionalDependencies`, so if one fails to install (for example due to a missing native dependency on your system), the others will still be available.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Basic usage" icon="terminal" href="/usage/basic-usage">
+    Compress your first image and learn the core output options.
+  </Card>
+  <Card title="Plugins" icon="puzzle-piece" href="/plugins/overview">
+    Extend imagemin CLI with custom plugins and per-plugin options.
+  </Card>
+</CardGroup>

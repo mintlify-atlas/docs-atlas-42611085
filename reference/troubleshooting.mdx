@@ -1,0 +1,140 @@
+---
+title: "Troubleshooting"
+description: "Common issues and solutions when using imagemin CLI"
+---
+
+<AccordionGroup>
+
+  <Accordion title='Unknown plugin: X'>
+    **Error message:**
+
+    ```
+    Unknown plugin: pngquant
+
+    Did you forget to install the plugin?
+    You can install it with:
+
+      $ npm install -g imagemin-pngquant
+    ```
+
+    **Cause:** The plugin you referenced with `--plugin` is not installed globally.
+
+    **Fix:** Install the missing plugin globally before running imagemin.
+
+    ```bash
+    npm install -g imagemin-pngquant
+    ```
+
+    Replace `pngquant` with the name of the plugin shown in the error. Plugin packages follow the naming convention `imagemin-<name>`.
+
+    <Note>
+      The default plugins (`gifsicle`, `jpegtran`, `optipng`, `svgo`) also require separate global installation. See [Default plugins](/plugins/default-plugins).
+    </Note>
+  </Accordion>
+
+  <Accordion title='Cannot write multiple files to stdout, specify `--out-dir`'>
+    **Cause:** You provided multiple input files (or a glob that matched more than one file) without specifying an output directory. imagemin cannot write multiple files to stdout.
+
+    **Fix:** Add `--out-dir` to direct output to a directory.
+
+    ```bash
+    # Wrong — multiple files, no output directory
+    imagemin images/*
+
+    # Right — write all minified files to the build/ directory
+    imagemin images/* --out-dir=build
+    ```
+  </Accordion>
+
+  <Accordion title='Specify at least one file path'>
+    **Cause:** You ran `imagemin` with no arguments and nothing was piped to stdin.
+
+    **Fix:** Provide at least one file path or glob pattern, or pipe a file through stdin.
+
+    ```bash
+    # Provide a file path
+    imagemin foo.png > foo-optimized.png
+
+    # Use a glob
+    imagemin images/* --out-dir=build
+
+    # Pipe from stdin
+    cat foo.png | imagemin > foo-optimized.png
+    ```
+  </Accordion>
+
+  <Accordion title='Plugin options not working'>
+    **Cause:** Plugin options must be passed as separate flags, not as comma-separated values in a single flag.
+
+    ```bash
+    # Wrong — comma-separated values in one flag
+    imagemin foo.png --plugin.pngquant.quality=0.1,0.2
+
+    # Right — repeat the flag for each value
+    imagemin foo.png --plugin.pngquant.quality=0.1 --plugin.pngquant.quality=0.2
+
+    # Right — brace expansion (non-Windows shells only)
+    imagemin foo.png --plugin.pngquant.quality={0.1,0.2}
+    ```
+
+    <Warning>
+      Brace expansion (`{0.1,0.2}`) is a shell feature supported on macOS and Linux. It does not work in Windows Command Prompt or PowerShell. Use repeated flags instead.
+    </Warning>
+  </Accordion>
+
+  <Accordion title='Node.js version compatibility'>
+    **Cause:** imagemin CLI requires Node.js 18 or later. Older versions are not supported.
+
+    **Fix:** Check your current Node.js version and upgrade if needed.
+
+    ```bash
+    node --version
+    ```
+
+    If your version is below 18, upgrade using one of the following methods:
+
+    - **[nvm](https://github.com/nvm-sh/nvm)** (recommended for macOS/Linux):
+      ```bash
+      nvm install 18
+      nvm use 18
+      ```
+    - **[Volta](https://volta.sh)**:
+      ```bash
+      volta install node@18
+      ```
+    - **Official installer**: Download from [nodejs.org](https://nodejs.org).
+  </Accordion>
+
+  <Accordion title='EACCES permission errors when installing globally (macOS/Linux)'>
+    **Cause:** Your global npm directory requires elevated permissions, which prevents `npm install -g` from succeeding.
+
+    **Fix:** Use one of the following approaches — avoid `sudo npm install -g` as it can cause further permission issues.
+
+    **Option 1 — Use nvm (recommended):** nvm installs Node.js in your home directory, so global installs never require sudo.
+
+    ```bash
+    nvm install --lts
+    npm install -g imagemin-cli
+    ```
+
+    **Option 2 — Configure a custom npm prefix:**
+
+    ```bash
+    mkdir -p ~/.npm-global
+    npm config set prefix ~/.npm-global
+    ```
+
+    Then add `~/.npm-global/bin` to your `PATH` in `~/.bashrc` or `~/.zshrc`:
+
+    ```bash
+    export PATH="$HOME/.npm-global/bin:$PATH"
+    ```
+
+    Reload your shell and retry the install.
+
+    <Warning>
+      Using `sudo npm install -g` is not recommended. It can create files owned by root and cause harder-to-diagnose permission issues later.
+    </Warning>
+  </Accordion>
+
+</AccordionGroup>

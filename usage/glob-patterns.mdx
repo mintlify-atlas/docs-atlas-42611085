@@ -1,0 +1,74 @@
+---
+title: "Glob patterns"
+description: "Use glob patterns to batch process images"
+---
+
+Imagemin accepts one or more glob patterns as positional arguments, making it easy to batch process entire directories or target specific file types.
+
+## Basic glob
+
+Match all files in a directory:
+
+```bash
+imagemin images/* --out-dir=build
+```
+
+## Multiple globs
+
+Pass multiple glob patterns to process files from different locations in one command:
+
+```bash
+imagemin src/**/*.png src/**/*.jpg --out-dir=dist
+```
+
+## Targeting specific formats
+
+Use brace expansion to match multiple extensions at once:
+
+```bash
+imagemin *.{png,jpg,gif} --out-dir=optimized
+```
+
+## Recursive patterns
+
+Use `**` to recursively match files in all subdirectories:
+
+```bash
+imagemin 'src/**/*.{png,jpg,jpeg,gif,svg}' --out-dir=dist
+```
+
+<Tip>
+  On Unix and macOS, the shell expands globs before passing them to imagemin. On Windows, glob expansion is handled by imagemin itself. To ensure consistent behavior across platforms — especially with `**` patterns — wrap your glob in single quotes to prevent premature shell expansion:
+
+  ```bash
+  imagemin 'src/**/*.png' --out-dir=dist
+  ```
+
+  In shell scripts or CI environments, quoting globs is always a safe practice.
+</Tip>
+
+## Typical project structures
+
+**Static site — process all images in a source folder:**
+
+```bash
+imagemin src/assets/images/* --out-dir=public/images
+```
+
+**Web app — process assets across multiple subdirectories:**
+
+```bash
+imagemin 'src/**/*.png' 'src/**/*.jpg' --out-dir=dist/assets
+```
+
+**Monorepo — target a specific package's images:**
+
+```bash
+imagemin packages/marketing/images/* --out-dir=packages/marketing/dist/images
+```
+
+**Process only GIFs and SVGs:**
+
+```bash
+imagemin 'assets/*.{gif,svg}' --out-dir=build
+```

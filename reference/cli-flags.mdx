@@ -1,0 +1,113 @@
+---
+title: "CLI flags"
+description: "Complete reference for all imagemin CLI flags and options"
+---
+
+## Usage syntax
+
+```bash
+imagemin <path|glob> ... --out-dir=build [--plugin=<name> ...]
+imagemin <file> > <output>
+cat <file> | imagemin > <output>
+```
+
+## Positional arguments
+
+<ParamField path="path|glob" type="string[]" required>
+  One or more file paths or glob patterns to minify. You can pass multiple paths separated by spaces.
+
+  ```bash
+  imagemin images/* --out-dir=build
+  imagemin foo.png bar.png --out-dir=build
+  ```
+
+  When omitted, imagemin reads from stdin.
+</ParamField>
+
+## Flags
+
+<ParamField query="--plugin" type="string" default="gifsicle, jpegtran, optipng, svgo">
+  Short flag: `-p`
+
+  Override the default compression plugins. Can be specified multiple times. When you use this flag, it **replaces the entire default plugin list** — only the plugins you specify will run.
+
+  ```bash
+  # Use a single custom plugin
+  imagemin foo.png --plugin=pngquant > foo-optimized.png
+
+  # Use multiple plugins
+  imagemin foo.png --plugin=pngquant --plugin=optipng > foo-optimized.png
+  ```
+
+  You can also pass plugin-specific options using dot notation:
+
+  ```bash
+  # Single option value
+  imagemin foo.png --plugin.pngquant.quality=0.6 > foo-optimized.png
+
+  # Multiple values for the same option (repeat the flag)
+  imagemin foo.png --plugin.pngquant.quality=0.1 --plugin.pngquant.quality=0.2 > foo-optimized.png
+
+  # Brace expansion (non-Windows shells only)
+  imagemin foo.png --plugin.pngquant.quality={0.1,0.2} > foo-optimized.png
+
+  # Multiple plugin options
+  imagemin foo.png --plugin.webp.quality=95 --plugin.webp.preset=icon > foo-icon.webp
+  ```
+
+  <Note>
+    The default plugins are `gifsicle`, `jpegtran`, `optipng`, and `svgo`. These must be installed separately. See [Default plugins](/plugins/default-plugins) for details.
+  </Note>
+</ParamField>
+
+<ParamField query="--out-dir" type="string">
+  Short flag: `-o`
+
+  Output directory for minified images. imagemin writes each minified file to this directory, preserving the original filename.
+
+  ```bash
+  imagemin images/* --out-dir=build
+  imagemin images/* -o build
+  ```
+
+  When `--out-dir` is specified:
+  - A spinner displays while processing.
+  - After completion, imagemin prints the count of minified images.
+  - Multiple input files are supported.
+
+  When `--out-dir` is **omitted**:
+  - Output goes to stdout.
+  - Only a single input file is allowed. Use `--out-dir` for multiple files.
+</ParamField>
+
+## Built-in flags
+
+These flags are provided automatically by the CLI framework ([meow](https://github.com/sindresorhus/meow)).
+
+<ParamField query="--help" type="boolean">
+  Print the help text and exit.
+
+  ```bash
+  imagemin --help
+  ```
+</ParamField>
+
+<ParamField query="--version" type="boolean">
+  Print the installed version of imagemin-cli and exit.
+
+  ```bash
+  imagemin --version
+  ```
+</ParamField>
+
+## Examples
+
+| Command | Description |
+|---------|-------------|
+| `imagemin images/* --out-dir=build` | Minify all images in `images/` and write to `build/` |
+| `imagemin foo.png > foo-optimized.png` | Minify a single file, write to stdout |
+| `cat foo.png \| imagemin > foo-optimized.png` | Read from stdin, write to stdout |
+| `imagemin foo.png --plugin=pngquant > foo-optimized.png` | Use a custom plugin |
+| `imagemin foo.png --plugin.pngquant.quality=0.1 --plugin.pngquant.quality=0.2 > foo-optimized.png` | Pass a range as multiple flag values |
+| `imagemin foo.png --plugin.pngquant.quality={0.1,0.2} > foo-optimized.png` | Pass a range using brace expansion (non-Windows) |
+| `imagemin foo.png --plugin.webp.quality=95 --plugin.webp.preset=icon > foo-icon.webp` | Convert to WebP with options |

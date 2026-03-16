@@ -1,0 +1,73 @@
+---
+title: "Default plugins"
+description: "Built-in plugins for PNG, JPEG, GIF, and SVG compression"
+---
+
+When you run imagemin CLI without specifying `--plugin`, four default plugins are loaded automatically. These are listed as `optionalDependencies` in the package and installed alongside imagemin CLI.
+
+All four default plugins use **lossless compression** — they reduce file size without degrading image quality.
+
+## The four default plugins
+
+| Plugin | Format | Compression type | npm package |
+|--------|--------|-----------------|-------------|
+| gifsicle | GIF | Lossless | `imagemin-gifsicle` |
+| jpegtran | JPEG | Lossless | `imagemin-jpegtran` |
+| optipng | PNG | Lossless | `imagemin-optipng` |
+| svgo | SVG | Lossless | `imagemin-svgo` |
+
+## Plugin details
+
+### gifsicle
+
+Handles `.gif` files using the [Gifsicle](https://www.lcdf.org/gifsicle/) tool. Supports both static and animated GIFs.
+
+```bash
+# Automatically used when processing GIF files
+imagemin animation.gif --out-dir=build
+```
+
+### jpegtran
+
+Handles `.jpg` and `.jpeg` files using [jpegtran](https://jpegclub.org/jpegtran/). Performs lossless JPEG transformations — no pixel data is changed.
+
+```bash
+# Automatically used when processing JPEG files
+imagemin photo.jpg --out-dir=build
+```
+
+### optipng
+
+Handles `.png` files using [OptiPNG](https://optipng.sourceforge.net/). Reduces PNG file size by finding the optimal compression parameters.
+
+```bash
+# Automatically used when processing PNG files
+imagemin logo.png --out-dir=build
+```
+
+### svgo
+
+Handles `.svg` files using [SVGO](https://github.com/svg/svgo). Removes redundant metadata, comments, and unnecessary attributes from SVG markup.
+
+```bash
+# Automatically used when processing SVG files
+imagemin icon.svg --out-dir=build
+```
+
+## Running a specific default plugin
+
+By default, all four plugins are loaded. To run only one of them — for example, to process only PNG files using optipng — pass it explicitly with `--plugin`:
+
+```bash
+imagemin foo.png --plugin=optipng > out.png
+```
+
+<Warning>
+  Passing `--plugin` replaces the full default list. If you specify `--plugin=optipng`, only optipng runs — gifsicle, jpegtran, and svgo are not loaded. Any image formats not handled by your specified plugin will pass through uncompressed.
+</Warning>
+
+To run multiple specific plugins together:
+
+```bash
+imagemin images/* --plugin=optipng --plugin=jpegtran --out-dir=build
+```

@@ -1,0 +1,83 @@
+---
+title: "Plugin options"
+description: "Configure plugins with per-option flags"
+---
+
+You can pass configuration options to any plugin using dot notation on the `--plugin` flag. This lets you control compression quality, format-specific settings, and other plugin parameters directly from the command line.
+
+## Dot notation syntax
+
+Use `--plugin.<name>.<option>=<value>` to set an option on a specific plugin:
+
+```bash
+imagemin foo.png --plugin.pngquant.quality=0.8 > out.png
+```
+
+This is equivalent to passing `{ quality: 0.8 }` to the pngquant plugin.
+
+## Array values
+
+Some options accept arrays (for example, a quality range). Pass the flag multiple times to build the array:
+
+```bash
+imagemin foo.png --plugin.pngquant.quality=0.1 --plugin.pngquant.quality=0.2 > foo-optimized.png
+```
+
+This passes `{ quality: [0.1, 0.2] }` to pngquant — a minimum/maximum quality range.
+
+<Note>
+  On non-Windows platforms, you can use shell brace expansion as a shorter alternative to repeating the flag:
+
+  ```bash
+  imagemin foo.png --plugin.pngquant.quality={0.1,0.2} > foo-optimized.png
+  ```
+
+  This expands to the same two flags before the shell passes them to imagemin. Windows `cmd.exe` and PowerShell do not support brace expansion — use the repeated flag form instead.
+</Note>
+
+## Examples
+
+### pngquant quality range
+
+Set a minimum and maximum quality for lossy PNG compression:
+
+```bash
+imagemin photo.png \
+  --plugin.pngquant.quality=0.6 \
+  --plugin.pngquant.quality=0.8 \
+  > photo-small.png
+```
+
+A quality of `0.6`–`0.8` tells pngquant to target that range. Lower values produce smaller files with more visible quality loss.
+
+### WebP quality and preset
+
+Encode an image as WebP with a specific quality level and use-case preset:
+
+```bash
+imagemin photo.png \
+  --plugin.webp.quality=95 \
+  --plugin.webp.preset=icon \
+  > photo-icon.webp
+```
+
+| Option | Value | Effect |
+|--------|-------|--------|
+| `quality` | `95` | High quality, minimal lossy artifacts |
+| `preset` | `icon` | Tuning preset optimized for small sharp graphics |
+
+## How options are applied internally
+
+The CLI collects all `--plugin` flags and maps them into plugin configuration objects before loading the plugins. For example:
+
+```bash
+--plugin.pngquant.quality=0.6 --plugin.pngquant.quality=0.8
+```
+
+becomes:
+
+```js
+{ pngquant: { quality: [0.6, 0.8] } }
+```
+
+The pngquant plugin then receives `{ quality: [0.6, 0.8] }` as its options argument when imagemin initializes it.

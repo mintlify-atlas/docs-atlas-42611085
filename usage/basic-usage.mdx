@@ -1,0 +1,88 @@
+---
+title: "Basic usage"
+description: "Minify images from the command line"
+---
+
+Imagemin CLI compresses images using a set of plugins. You can minify a single file, a glob of files, or pipe images through stdin/stdout.
+
+## Minify a single file
+
+To minify a single image and write the output to a new file, redirect stdout:
+
+```bash
+imagemin foo.png > foo-optimized.png
+```
+
+When no `--out-dir` flag is provided, imagemin writes the result to stdout. This only works for a single input file — see the note below.
+
+## Minify multiple files to a directory
+
+Use the `--out-dir` (or `-o`) flag to write minified files to an output directory:
+
+```bash
+imagemin images/* --out-dir=build
+```
+
+Imagemin will process every matched file and write the compressed versions to the `build` directory, preserving filenames.
+
+<Steps>
+  <Step title="Choose your input">
+    Provide one or more file paths or glob patterns as positional arguments:
+
+    ```bash
+    imagemin images/* --out-dir=build
+    ```
+  </Step>
+  <Step title="Wait for the spinner">
+    When `--out-dir` is specified, a spinner is shown while imagemin processes your files:
+
+    ```
+    ⠙ Minifying images
+    ```
+  </Step>
+  <Step title="Check the output">
+    Once complete, imagemin prints a summary:
+
+    ```
+    42 images minified
+    ```
+
+    Your optimized images are now in the output directory.
+  </Step>
+</Steps>
+
+<Note>
+  Without `--out-dir`, imagemin writes output to stdout. This works for a single file only. If you pass multiple files without `--out-dir`, imagemin will exit with an error:
+
+  ```
+  Cannot write multiple files to stdout, specify `--out-dir`
+  ```
+
+  Always use `--out-dir` when processing more than one file.
+</Note>
+
+## Common examples
+
+Minify all images in a directory:
+
+```bash
+imagemin images/* --out-dir=build
+```
+
+Minify images from multiple source directories:
+
+```bash
+imagemin src/images/* assets/photos/* --out-dir=dist/images
+```
+
+Minify a single PNG and save it with a new name:
+
+```bash
+imagemin logo.png > logo-min.png
+```
+
+Minify using the short flag for output directory:
+
+```bash
+imagemin images/* -o build
+```

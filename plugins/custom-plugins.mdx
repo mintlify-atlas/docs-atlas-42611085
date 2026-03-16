@@ -1,0 +1,85 @@
+---
+title: "Custom plugins"
+description: "Install and use custom imagemin plugins"
+---
+
+You can use any `imagemin-*` plugin from npm in place of — or instead of — the default plugins. This is useful when you need lossy compression, format conversion, or compression settings that the defaults don't support.
+
+<Warning>
+  Specifying `--plugin` replaces the **entire** default plugin list. When you pass `--plugin=pngquant`, only pngquant is loaded. The default gifsicle, jpegtran, optipng, and svgo plugins do not run unless you also include them explicitly.
+</Warning>
+
+## Install and use a custom plugin
+
+<Steps>
+  <Step title="Install the plugin globally">
+    All imagemin plugins follow the `imagemin-<name>` naming convention. Install the plugin with npm:
+
+    ```bash
+    npm install --global imagemin-pngquant
+    ```
+  </Step>
+  <Step title="Run imagemin with the plugin">
+    Pass the plugin name (without the `imagemin-` prefix) using the `--plugin` flag:
+
+    ```bash
+    imagemin foo.png --plugin=pngquant > foo-optimized.png
+    ```
+  </Step>
+</Steps>
+
+## Examples
+
+### Lossy PNG compression with pngquant
+
+pngquant produces significantly smaller PNGs than optipng by using lossy quantization:
+
+```bash
+npm install --global imagemin-pngquant
+imagemin foo.png --plugin=pngquant > foo-optimized.png
+```
+
+To control quality, pass options using dot notation:
+
+```bash
+imagemin foo.png --plugin.pngquant.quality=0.6 --plugin.pngquant.quality=0.8 > foo-optimized.png
+```
+
+See [Plugin options](/plugins/plugin-options) for full details on passing options.
+
+### Convert to WebP
+
+The `imagemin-webp` plugin encodes images as WebP:
+
+```bash
+npm install --global imagemin-webp
+imagemin photo.png --plugin=webp > photo.webp
+```
+
+With quality and preset options:
+
+```bash
+imagemin photo.png --plugin.webp.quality=95 --plugin.webp.preset=icon > photo-icon.webp
+```
+
+### Multiple custom plugins
+
+You can load multiple plugins in a single command by repeating `--plugin`:
+
+```bash
+imagemin images/* --plugin=pngquant --plugin=webp --out-dir=build
+```
+
+This loads both pngquant and webp. Each plugin handles the formats it supports — PNG files are compressed by pngquant, and any files webp can handle are converted.
+
+### Mixing custom and default plugins
+
+To use a custom plugin alongside some default plugins, list all of them explicitly:
+
+```bash
+imagemin images/* --plugin=pngquant --plugin=jpegtran --plugin=gifsicle --out-dir=build
+```
+
+<Tip>
+  You can find available imagemin plugins by searching npm for [`imagemin-`](https://www.npmjs.com/search?q=imagemin-).
+</Tip>

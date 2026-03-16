@@ -1,0 +1,68 @@
+---
+title: "imagemin CLI"
+description: "Minify images seamlessly from the command line"
+---
+
+<img
+  className="block"
+  src="https://img.shields.io/npm/v/imagemin-cli?color=4CAF50&label=imagemin-cli"
+  alt="npm version"
+/>
+
+imagemin CLI is a command-line tool that compresses and optimizes images with minimal effort. It wraps the [imagemin](https://github.com/imagemin/imagemin) library and exposes it as a fast, scriptable CLI — ideal for build pipelines, CI workflows, and one-off batch compressions.
+
+## What you can do
+
+<CardGroup cols={2}>
+  <Card title="Minify a single image" icon="image" href="/usage/basic-usage">
+    Compress a PNG, JPEG, GIF, or SVG file and write the result to a file or stdout.
+  </Card>
+  <Card title="Batch process with globs" icon="files" href="/usage/glob-patterns">
+    Use glob patterns to minify entire directories of images at once.
+  </Card>
+  <Card title="Stream via stdin/stdout" icon="arrow-right-arrow-left" href="/usage/stdin-stdout">
+    Pipe images through imagemin in shell pipelines for maximum composability.
+  </Card>
+  <Card title="Configure plugins" icon="puzzle-piece" href="/plugins/overview">
+    Use built-in plugins or install custom ones for fine-grained compression control.
+  </Card>
+</CardGroup>
+
+## Supported formats
+
+imagemin CLI ships with optional default plugins that cover the most common image formats:
+
+| Format | Plugin | Description |
+|--------|--------|-------------|
+| PNG | `imagemin-optipng` | Lossless PNG compression |
+| JPEG | `imagemin-jpegtran` | Lossless JPEG optimization |
+| GIF | `imagemin-gifsicle` | GIF compression and optimization |
+| SVG | `imagemin-svgo` | SVG optimization via SVGO |
+| WebP | `imagemin-webp` (custom) | WebP encoding with quality control |
+
+## Quick example
+
+```bash
+# Install globally
+npm install --global imagemin-cli
+
+# Minify all images in a directory
+imagemin images/* --out-dir=build
+
+# Minify a single file
+imagemin logo.png > logo-optimized.png
+
+# Use with custom plugin options
+imagemin photo.png --plugin.pngquant.quality=0.6 --plugin.pngquant.quality=0.8 > photo-small.png
+```
+
+## Get started
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/installation">
+    Install imagemin CLI globally with npm in seconds.
+  </Card>
+  <Card title="Basic usage" icon="terminal" href="/usage/basic-usage">
+    Learn the core commands and output options.
+  </Card>
+</CardGroup>

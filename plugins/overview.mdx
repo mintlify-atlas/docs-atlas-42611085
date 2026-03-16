@@ -1,0 +1,72 @@
+---
+title: "Plugins overview"
+description: "How imagemin CLI uses plugins for image compression"
+---
+
+imagemin CLI compresses images through **plugins** — small packages that each handle a specific image format. When you run a command, imagemin loads the relevant plugins and passes your images through them.
+
+## How plugins work
+
+Each plugin is a separate npm package with the naming convention `imagemin-<name>`. When imagemin processes an image, it:
+
+1. Reads the file (or stdin)
+2. Determines which loaded plugins can handle the format
+3. Passes the image buffer through matching plugins
+4. Writes the compressed result
+
+Plugins are loaded dynamically at runtime using `import('imagemin-<name>')`. If a plugin is not installed, the CLI exits with an error and tells you how to install it:
+
+```
+Unknown plugin: pngquant
+
+Did you forget to install the plugin?
+You can install it with:
+
+  $ npm install -g imagemin-pngquant
+```
+
+## Default plugins
+
+imagemin CLI ships with four optional dependencies that cover the most common formats. These run automatically when no `--plugin` flag is specified:
+
+<CardGroup cols={2}>
+  <Card title="imagemin-gifsicle" icon="file" href="/plugins/default-plugins">
+    Compresses GIF images using Gifsicle.
+  </Card>
+  <Card title="imagemin-jpegtran" icon="file" href="/plugins/default-plugins">
+    Losslessly optimizes JPEG images using jpegtran.
+  </Card>
+  <Card title="imagemin-optipng" icon="file" href="/plugins/default-plugins">
+    Losslessly compresses PNG images using OptiPNG.
+  </Card>
+  <Card title="imagemin-svgo" icon="file" href="/plugins/default-plugins">
+    Optimizes SVG files using SVGO.
+  </Card>
+</CardGroup>
+
+## Custom plugins
+
+You can replace the default plugins with any `imagemin-*` package from npm. Pass `--plugin=<name>` to specify which plugins to use:
+
+```bash
+# Use pngquant instead of (or in addition to) the defaults
+npm install --global imagemin-pngquant
+imagemin foo.png --plugin=pngquant > foo-optimized.png
+```
+
+<Note>
+  Specifying `--plugin` replaces the entire default plugin list. See [Custom plugins](/plugins/custom-plugins) for details.
+</Note>
+
+## Plugin naming convention
+
+All imagemin plugins follow the `imagemin-<name>` package naming pattern. When you pass `--plugin=pngquant`, the CLI imports `imagemin-pngquant`. The package must be installed globally (or in the local `node_modules`) before you can use it.
+
+## When to override the defaults
+
+The default plugins use lossless compression, which is safe but produces modest file size reductions. You may want to override them when:
+
+- You need **lossy compression** for significantly smaller files (e.g., `imagemin-pngquant` for PNGs)
+- You want to **convert formats** (e.g., `imagemin-webp` to produce WebP output)
+- You need **fine-grained control** over compression settings not available in the default plugins
+- You want to run **only one plugin** to process a specific format
